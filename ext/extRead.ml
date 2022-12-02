@@ -1,5 +1,7 @@
 type 'a cast = string -> 'a
 
+let cast = Fun.id
+
 let int s =
   match int_of_string_opt s with
   | None -> failwith "ExtRead.int"

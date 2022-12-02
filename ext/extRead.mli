@@ -77,6 +77,11 @@ val tuple5g : 'a cast -> 'b cast -> 'c cast -> 'd cast -> 'e cast
 val tuple5 : 'a cast -> ('a * 'a * 'a * 'a * 'a) cast
 (** [tuple5 c s = tuple5g c c c c c s]. *)
 
+(** {3 Custom} *)
+
+val cast : (string -> 'a) -> 'a cast
+(** Create a cast from a [string -> 'a] function. *)
+
 (** {2 Reader} *)
 
 val of_string : 'a cast -> string -> 'a
