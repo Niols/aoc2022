@@ -27,5 +27,13 @@ jobs:
       - name: Build Everything
         run: nix develop --command dune build
 
+      - name: Check Sync of Files
+        run: |
+          if [ -n "$(git status --porcelain)" ]; then
+            printf 'Files are not in sync; building changed some:\n'
+            git diff
+            exit 1
+          fi
+
       - name: Test Everything
         run: nix develop --command dune test
