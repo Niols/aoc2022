@@ -26,3 +26,6 @@ val hdn : int -> 'a list -> 'a list
 val bd : 'a list -> 'a list
 
 val ft : 'a list -> 'a
+
+val init_until : (int -> 'a option) -> 'a list
+(** [init_until f] initialises a list by calling [f] until it returns [None]. *)

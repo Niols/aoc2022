@@ -205,3 +205,11 @@ let rec ft = function
   | [] -> failwith "ExtList.ft"
   | [e] -> e
   | _ :: l -> ft l
+
+let init_until f =
+  let rec aux i acc =
+    match f i with
+    | None -> acc
+    | Some x -> aux (i+1) (x::acc)
+  in
+  rev @@ aux 0 []

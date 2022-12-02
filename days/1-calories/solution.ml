@@ -3,14 +3,8 @@ open Ext
 (* Parsing *)
 
 let elfs : int list list =
-  let elfs = ref [] in
-  try
-    while true do
-      elfs := Read.(lines_until_empty int) :: !elfs
-    done;
-    assert false
-  with
-    End_of_file -> List.rev !elfs
+  List.init_until @@ fun _ ->
+  try Some Read.(lines_until_empty int) with End_of_file -> None
 
 let calories : int list = List.map (List.fold_left (+) 0) elfs
 
