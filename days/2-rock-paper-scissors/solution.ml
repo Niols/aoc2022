@@ -16,9 +16,9 @@ let shape_of_string = function
 let guide : (shape * shape) list =
   Read.(lines_until_empty @@ pair @@ cast shape_of_string)
 
-(* {1 Part 1}
+(** {2 Part 1}
 
-   We want the score of the guide according the the given rules. *)
+    We want the score of the guide according the the given rules. *)
 
 let shape_score = function
   | Rock -> 1
@@ -43,5 +43,33 @@ let () =
   |> List.map (fun (other, you) ->
       shape_score you
       + outcome_score (outcome ~you ~other))
+  |> List.fold_left (+) 0
+  |> pf "%d@."
+
+(** {2 Part 2} *)
+
+(* In fact, X Y Z was not Rock/Paper/Scissors, but an outcome. We fix the given
+   guide. It's a bit ugly but at least it follows the way the instructions were
+   given. *)
+
+let fix_shape_into_outcome = function
+  | Rock -> Lost
+  | Paper -> Draw
+  | Scissors -> Won
+
+let outcome_guide : (shape * outcome) list =
+  List.map (fun (s1, s2) -> (s1, fix_shape_into_outcome s2)) guide
+
+let shape ~other ~outcome =
+  match (other, outcome) with
+  | (Rock, Draw) | (Paper, Lost) | (Scissors, Won) -> Rock
+  | (Rock, Won) | (Paper, Draw) | (Scissors, Lost) -> Paper
+  | (Rock, Lost) | (Paper, Won) | (Scissors, Draw) -> Scissors
+
+let () =
+  outcome_guide
+  |> List.map (fun (other, outcome) ->
+      shape_score (shape ~other ~outcome)
+      + outcome_score outcome)
   |> List.fold_left (+) 0
   |> pf "%d@."
