@@ -1,0 +1,6 @@
+(library
+ (name ext)
+ (public_name aoc2022.ext)
+ (libraries unix)
+ (preprocess (pps ppx_inline_test ppx_deriving.std))
+ (inline_tests))
