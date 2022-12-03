@@ -5,9 +5,9 @@ val union_sorted : ('a -> 'a -> int) -> 'a list -> 'a list -> 'a list
    is equivalent to [sort_uniq cmp (l1 @ l2)] except faster. *)
 
 val inter_sorted : ('a -> 'a -> int) -> 'a list -> 'a list -> 'a list
-(** Returns the intersection of two sorted lists seen as sets. [diff_sorted cmp
-   l1 l2] is equivalent to [filter (fun x1 -> exists (fun x2 -> cmp x1 x2 = 0)
-   l2) l1] except much faster. *)
+(** Returns the intersection of two sorted lists seen as sets. [inter_sorted cmp
+    l1 l2] is equivalent to [filter (fun x1 -> exists (fun x2 -> cmp x1 x2 = 0)
+    l2) l1] except much faster. *)
 
 val diff_sorted : ('a -> 'a -> int) -> 'a list -> 'a list -> 'a list
 (** Returns the difference of two sorted lists seen as sets. [diff_sorted cmp l1
