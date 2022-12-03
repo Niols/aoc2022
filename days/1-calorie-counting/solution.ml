@@ -1,6 +1,8 @@
+(** {1 Day 1 -- Calorie Counting} *)
+
 open Ext
 
-(** {1 Parsing}
+(** {2 Parsing}
 
     We represent the elfs as an [int list list]: each elf corresponds to a list
     of calories/integers and we have a list of elves. We represent the calories
@@ -16,24 +18,19 @@ let elfs : int list list =
 
 let calories : int list = List.map (List.fold_left (+) 0) elfs
 
-(* {1 Part 1}
+(** {2 Part 1}
 
-   We want the maximum number in the list {!calories}. *)
+    We want the maximum number in the list {!calories}. *)
 
-let () =
-  pf "Maximimum amount of calories: %d.@."
-    (List.fold_left max 0 calories)
+let () = pf "%d@." (List.fold_left max 0 calories)
 
-(* {2 Part 2}
+(** {2 Part 2}
 
-   We want the sum of the three maximal numbers in {!calories}. *)
+    We want the sum of the three maximal numbers in {!calories}. *)
 
 let max3 =
   (* NOTE: The inversion of [a] and [b] in the argument of {!List.sort} is on
      purpose. *)
   match List.sort (fun a b -> Int.compare b a) calories with
-  | top1 :: top2 :: top3 :: _ ->
-    pf "Amount of calories in top 3: %d.@." (top1 + top2 + top3)
-  | _ ->
-    epf "NOT ENOUGH ELVES!@.";
-    exit 7
+  | top1 :: top2 :: top3 :: _ -> pf "%d@." (top1 + top2 + top3)
+  | _ -> epf "NOT ENOUGH ELVES!@."; exit 7

@@ -1,6 +1,8 @@
+(** {1 Day 2 -- Rock-Paper-Scissors} *)
+
 open Ext
 
-(** {1 Parsing}
+(** {2 Parsing}
 
     We represent the shapes as a data type with three constructors. We represent
     a guide as a list of pairs of shapes. *)

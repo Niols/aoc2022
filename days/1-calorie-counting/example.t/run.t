@@ -1,3 +1,3 @@
-  $ cat example.txt | ../solution.exe
-  Maximimum amount of calories: 24000.
-  Amount of calories in top 3: 45000.
+  $ cat input.txt | ../solution.exe
+  24000
+  45000
