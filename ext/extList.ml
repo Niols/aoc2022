@@ -213,3 +213,25 @@ let init_until f =
     | Some x -> aux (i+1) (x::acc)
   in
   rev @@ aux 0 []
+
+let sub l pos len =
+  if pos < 0 || len < 0 then
+    invalid_arg "ExtList.sub";
+  let rec go_to_pos i = function
+    | xs when i = pos -> gather_len 0 [] xs
+    | [] -> invalid_arg "ExtList.sub"
+    | _::xs -> go_to_pos (i+1) xs
+  and gather_len j acc = function
+    | _ when j = len -> List.rev acc
+    | [] -> invalid_arg "ExtList.sub"
+    | x::xs -> gather_len (j+1) (x::acc) xs
+  in
+  go_to_pos 0 l
+
+let%test_module _ = (module struct
+  let%test _ = sub [1; 2; 3; 4; 5] 3 0 = []
+  let%test _ = sub [1; 2; 3; 4; 5] 0 3 = [1; 2; 3]
+  let%test _ = sub [1; 2; 3; 4; 5] 2 2 = [3; 4]
+  let%test _ = sub [1; 2; 3; 4; 5] 1 4 = [2; 3; 4; 5]
+  let%test _ = sub [1; 2; 3; 4; 5] 0 5 = [1; 2; 3; 4; 5]
+end)

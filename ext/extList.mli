@@ -29,3 +29,10 @@ val ft : 'a list -> 'a
 
 val init_until : (int -> 'a option) -> 'a list
 (** [init_until f] initialises a list by calling [f] until it returns [None]. *)
+
+val sub : 'a list -> int -> int -> 'a list
+(** [sub l pos len] is a list of length [len], containing the sublist of [l]
+    that starts at position [pos] and has length [len].
+
+    @raise Invalid_argument if [pos] and [len] do not designate a valid sublist
+      of [l]. *)
