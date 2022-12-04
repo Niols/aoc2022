@@ -27,3 +27,13 @@ let () =
   |> pf "%d@."
 
 (** {2 Part 2} *)
+
+let interval_intersect (n1, n2) (m1, m2) =
+  let r1 = max n1 m1 in
+  let r2 = min n2 m2 in
+  r1 <= r2
+
+let () =
+  section_assignment_pairs
+  |> List.count (uncurry interval_intersect)
+  |> pf "%d@."
