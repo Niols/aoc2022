@@ -159,5 +159,23 @@ let%test_module _ = (module struct
   let%test _ = test (pair int (array string)) "7 8 9 10" (Ok (7, [|"8"; "9"; "10"|]))
   let%test _ = test (pair int (array string)) "7" (Error failure)
 
-  (* FIXME: Missing tests for separators. *)
+  let comma = Str.regexp "[ \t]*,[ \t]*"
+
+  let%test _ = test (list ~separator:comma int) "1,2,7" (Ok [1; 2; 7])
+  let%test _ = test (list ~separator:comma int) "1, 2 ,7" (Ok [1; 2; 7])
+  let%test _ = test (list ~separator:comma int) "1   , 2 , 7" (Ok [1; 2; 7])
+  let%test _ = test (list ~separator:comma int) "1  , , 2 , 7" (Error failure)
+
+  let%test _ = test (triple ~separator:comma int int int) "1,2,7" (Ok (1, 2, 7))
+  let%test _ = test (triple ~separator:comma int int int) "1, 2 ,7" (Ok (1, 2, 7))
+  let%test _ = test (triple ~separator:comma int int int) "1   , 2 , 7" (Ok (1, 2, 7))
+  let%test _ = test (triple ~separator:comma int int int) "1  , , 2 , 7" (Error failure)
+
+  let dash = Str.regexp "-"
+
+  let%test _ = test (list ~separator:comma (pair ~separator:dash int float)) "2-4,6-8" (Ok [(2, 4.); (6, 8.)])
+  let%test _ = test (list ~separator:comma (pair ~separator:dash int float)) "2-4, 6-8" (Ok [(2, 4.); (6, 8.)])
+  let%test _ = test (list ~separator:comma (pair ~separator:dash int float)) "2-4  ,6-8" (Ok [(2, 4.); (6, 8.)])
+  let%test _ = test (list ~separator:comma (pair ~separator:dash int float)) "2-4-3  ,6-8" (Error failure)
+  let%test _ = test (list ~separator:comma (pair ~separator:dash int float)) "2,4-5  ,6-8" (Error failure)
 end)
