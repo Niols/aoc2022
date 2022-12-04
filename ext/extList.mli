@@ -36,3 +36,7 @@ val sub : 'a list -> int -> int -> 'a list
 
     @raise Invalid_argument if [pos] and [len] do not designate a valid sublist
       of [l]. *)
+
+val count : ('a -> bool) -> 'a list -> int
+(** Counts the number of elements in the list that respect the given predicate.
+    This is the same as {!filter} followed by {!length}, but faster. *)

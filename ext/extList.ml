@@ -235,3 +235,10 @@ let%test_module _ = (module struct
   let%test _ = sub [1; 2; 3; 4; 5] 1 4 = [2; 3; 4; 5]
   let%test _ = sub [1; 2; 3; 4; 5] 0 5 = [1; 2; 3; 4; 5]
 end)
+
+let count p l =
+  let rec count i = function
+    | [] -> i
+    | x :: l -> count (if p x then i + 1 else i) l
+  in
+  count 0 l

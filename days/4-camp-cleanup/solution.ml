@@ -23,9 +23,7 @@ let any_interval_inclusion interval1 interval2 =
 
 let () =
   section_assignment_pairs
-  |> List.map (uncurry any_interval_inclusion)
-  |> List.filter Fun.id
-  |> List.length
+  |> List.count (uncurry any_interval_inclusion)
   |> pf "%d@."
 
 (** {2 Part 2} *)
