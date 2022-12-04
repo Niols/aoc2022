@@ -1,5 +1,5 @@
 (executable
  (name solution)
- (libraries aoc2022.ext))
+ (libraries aoc2022.ext str))
 
 (cram (deps ./solution.exe))
