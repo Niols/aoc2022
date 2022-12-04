@@ -17,9 +17,9 @@ let interval_inclusion ~needle:(n1, n2) ~haystack:(h1, h2) =
   h1 <= n1 && n2 <= h2
 
 (** Whether one of the two intervals is included in the other. *)
-let any_interval_inclusion (n1, n2) (h1, h2) =
-  interval_inclusion ~needle:(n1, n2) ~haystack:(h1, h2)
-  || interval_inclusion ~needle:(h1, h2) ~haystack:(n1, n2)
+let any_interval_inclusion interval1 interval2 =
+  interval_inclusion ~needle:interval1 ~haystack:interval2
+  || interval_inclusion ~needle:interval2 ~haystack:interval1
 
 let () =
   section_assignment_pairs
