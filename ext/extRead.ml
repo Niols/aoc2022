@@ -28,42 +28,42 @@ let no_space_string s =
 
 let blank = Str.regexp "[ \t]+"
 
-let list ?(separator=blank) cast input =
-  Str.split separator input |> List.map cast
+let list ?(sep=blank) cast input =
+  Str.split sep input |> List.map cast
 
-let non_empty_list ?separator cast input =
-  let result = list ?separator cast input in
+let non_empty_list ?sep cast input =
+  let result = list ?sep cast input in
   if result = [] then failwith "ExtRead.non_empty_list";
   result
 
-let array ?separator cast input =
-  list ?separator cast input |> Array.of_list
+let array ?sep cast input =
+  list ?sep cast input |> Array.of_list
 
-let non_empty_array ?separator cast input =
-  non_empty_list ?separator cast input |> Array.of_list
+let non_empty_array ?sep cast input =
+  non_empty_list ?sep cast input |> Array.of_list
 
-let tuple2 ?(separator=blank) cast1 cast2 input =
-  match Str.bounded_split separator input 2 with
+let tuple2 ?(sep=blank) cast1 cast2 input =
+  match Str.bounded_split sep input 2 with
   | [value1; value2] -> (cast1 value1, cast2 value2)
   | _ -> failwith "ExtRead.tuple2"
 
 let pair = tuple2
 
-let tuple3 ?(separator=blank) cast1 cast2 cast3 input =
-  match Str.bounded_split separator input 3 with
+let tuple3 ?(sep=blank) cast1 cast2 cast3 input =
+  match Str.bounded_split sep input 3 with
   | [value1; value2; value3] -> (cast1 value1, cast2 value2, cast3 value3)
   | _ -> failwith "ExtRead.tuple3"
 
 let triple = tuple3
 
-let tuple4 ?(separator=blank) cast1 cast2 cast3 cast4 input =
-  match Str.bounded_split separator input 4 with
+let tuple4 ?(sep=blank) cast1 cast2 cast3 cast4 input =
+  match Str.bounded_split sep input 4 with
   | [value1; value2; value3; value4] ->
     (cast1 value1, cast2 value2, cast3 value3, cast4 value4)
   | _ -> failwith "ExtRead.tuple4"
 
-let tuple5 ?(separator=blank) cast1 cast2 cast3 cast4 cast5 input =
-  match Str.bounded_split separator input 5 with
+let tuple5 ?(sep=blank) cast1 cast2 cast3 cast4 cast5 input =
+  match Str.bounded_split sep input 5 with
   | [value1; value2; value3; value4; value5] ->
     (cast1 value1, cast2 value2, cast3 value3, cast4 value4, cast5 value5)
   | _ -> failwith "ExtRead.tuple5"
@@ -161,21 +161,21 @@ let%test_module _ = (module struct
 
   let comma = Str.regexp "[ \t]*,[ \t]*"
 
-  let%test _ = test (list ~separator:comma int) "1,2,7" (Ok [1; 2; 7])
-  let%test _ = test (list ~separator:comma int) "1, 2 ,7" (Ok [1; 2; 7])
-  let%test _ = test (list ~separator:comma int) "1   , 2 , 7" (Ok [1; 2; 7])
-  let%test _ = test (list ~separator:comma int) "1  , , 2 , 7" (Error failure)
+  let%test _ = test (list ~sep:comma int) "1,2,7" (Ok [1; 2; 7])
+  let%test _ = test (list ~sep:comma int) "1, 2 ,7" (Ok [1; 2; 7])
+  let%test _ = test (list ~sep:comma int) "1   , 2 , 7" (Ok [1; 2; 7])
+  let%test _ = test (list ~sep:comma int) "1  , , 2 , 7" (Error failure)
 
-  let%test _ = test (triple ~separator:comma int int int) "1,2,7" (Ok (1, 2, 7))
-  let%test _ = test (triple ~separator:comma int int int) "1, 2 ,7" (Ok (1, 2, 7))
-  let%test _ = test (triple ~separator:comma int int int) "1   , 2 , 7" (Ok (1, 2, 7))
-  let%test _ = test (triple ~separator:comma int int int) "1  , , 2 , 7" (Error failure)
+  let%test _ = test (triple ~sep:comma int int int) "1,2,7" (Ok (1, 2, 7))
+  let%test _ = test (triple ~sep:comma int int int) "1, 2 ,7" (Ok (1, 2, 7))
+  let%test _ = test (triple ~sep:comma int int int) "1   , 2 , 7" (Ok (1, 2, 7))
+  let%test _ = test (triple ~sep:comma int int int) "1  , , 2 , 7" (Error failure)
 
   let dash = Str.regexp "-"
 
-  let%test _ = test (list ~separator:comma (pair ~separator:dash int float)) "2-4,6-8" (Ok [(2, 4.); (6, 8.)])
-  let%test _ = test (list ~separator:comma (pair ~separator:dash int float)) "2-4, 6-8" (Ok [(2, 4.); (6, 8.)])
-  let%test _ = test (list ~separator:comma (pair ~separator:dash int float)) "2-4  ,6-8" (Ok [(2, 4.); (6, 8.)])
-  let%test _ = test (list ~separator:comma (pair ~separator:dash int float)) "2-4-3  ,6-8" (Error failure)
-  let%test _ = test (list ~separator:comma (pair ~separator:dash int float)) "2,4-5  ,6-8" (Error failure)
+  let%test _ = test (list ~sep:comma (pair ~sep:dash int float)) "2-4,6-8" (Ok [(2, 4.); (6, 8.)])
+  let%test _ = test (list ~sep:comma (pair ~sep:dash int float)) "2-4, 6-8" (Ok [(2, 4.); (6, 8.)])
+  let%test _ = test (list ~sep:comma (pair ~sep:dash int float)) "2-4  ,6-8" (Ok [(2, 4.); (6, 8.)])
+  let%test _ = test (list ~sep:comma (pair ~sep:dash int float)) "2-4-3  ,6-8" (Error failure)
+  let%test _ = test (list ~sep:comma (pair ~sep:dash int float)) "2,4-5  ,6-8" (Error failure)
 end)
