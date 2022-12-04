@@ -26,49 +26,47 @@ let no_space_string s =
     failwith "ExtRead.no_space_string";
   s
 
-let list c s =
-  if s = "" then []
-  else String.split_on_char ' ' s |> List.map c
+let blank = Str.regexp "[ \t]+"
 
-let non_empty_list c s =
-  match list c s with
-  | [] -> failwith "ExtRead.non_empty_list"
-  | l -> l
+let list ?(separator=blank) cast input =
+  Str.split separator input |> List.map cast
 
-let array c s = list c s |> Array.of_list
-let non_empty_array c s = non_empty_list c s |> Array.of_list
+let non_empty_list ?separator cast input =
+  let result = list ?separator cast input in
+  if result = [] then failwith "ExtRead.non_empty_list";
+  result
 
-let tuple2g c1 c2 s =
-  match ExtString.split_on_char_n 2 ' ' s with
-  | [v1; v2] -> (c1 v1, c2 v2)
-  | _ -> assert false
+let array ?separator cast input =
+  list ?separator cast input |> Array.of_list
 
-let tuple2 c s = tuple2g c c s
-let pairg = tuple2g
+let non_empty_array ?separator cast input =
+  non_empty_list ?separator cast input |> Array.of_list
+
+let tuple2 ?(separator=blank) cast1 cast2 input =
+  match Str.bounded_split separator input 2 with
+  | [value1; value2] -> (cast1 value1, cast2 value2)
+  | _ -> failwith "ExtRead.tuple2"
+
 let pair = tuple2
 
-let tuple3g c1 c2 c3 s =
-  match ExtString.split_on_char_n 3 ' ' s with
-  | [v1; v2; v3] -> (c1 v1, c2 v2, c3 v3)
-  | _ -> assert false
+let tuple3 ?(separator=blank) cast1 cast2 cast3 input =
+  match Str.bounded_split separator input 3 with
+  | [value1; value2; value3] -> (cast1 value1, cast2 value2, cast3 value3)
+  | _ -> failwith "ExtRead.tuple3"
 
-let tuple3 c s = tuple3g c c c s
-let tripleg = tuple3g
 let triple = tuple3
 
-let tuple4g c1 c2 c3 c4 s =
-  match ExtString.split_on_char_n 4 ' ' s with
-  | [v1; v2; v3; v4] -> (c1 v1, c2 v2, c3 v3, c4 v4)
-  | _ -> assert false
+let tuple4 ?(separator=blank) cast1 cast2 cast3 cast4 input =
+  match Str.bounded_split separator input 4 with
+  | [value1; value2; value3; value4] ->
+    (cast1 value1, cast2 value2, cast3 value3, cast4 value4)
+  | _ -> failwith "ExtRead.tuple4"
 
-let tuple4 c s = tuple4g c c c c s
-
-let tuple5g c1 c2 c3 c4 c5 s =
-  match ExtString.split_on_char_n 5 ' ' s with
-  | [v1; v2; v3; v4; v5] -> (c1 v1, c2 v2, c3 v3, c4 v4, c5 v5)
-  | _ -> assert false
-
-let tuple5 c s = tuple5g c c c c c s
+let tuple5 ?(separator=blank) cast1 cast2 cast3 cast4 cast5 input =
+  match Str.bounded_split separator input 5 with
+  | [value1; value2; value3; value4; value5] ->
+    (cast1 value1, cast2 value2, cast3 value3, cast4 value4, cast5 value5)
+  | _ -> failwith "ExtRead.tuple5"
 
 let of_string cast s = cast s
 
@@ -126,38 +124,40 @@ let%test_module _ = (module struct
   let%test _ = test (array int) "" (Ok [||])
   let%test _ = test (non_empty_array int) "" (Error failure)
 
-  let%test _ = test (pair int) "7 8" (Ok (7, 8))
-  let%test _ = test (pair int) "7 L" (Error failure)
-  let%test _ = test (pair int) "7" (Error failure)
-  let%test _ = test (pair int) "7 8 9" (Error failure)
+  let%test _ = test (pair int int) "7 8" (Ok (7, 8))
+  let%test _ = test (pair int int) "7 L" (Error failure)
+  let%test _ = test (pair int int) "7" (Error failure)
+  let%test _ = test (pair int int) "7 8 9" (Error failure)
 
-  let%test _ = test (pairg int float) "7 34.2" (Ok (7, 34.2))
-  let%test _ = test (tuple2 int) "8 9" (Ok (8, 9))
-  let%test _ = test (tuple2g int float) "7 34.2" (Ok (7, 34.2))
+  let%test _ = test (pair int float) "7 34.2" (Ok (7, 34.2))
+  let%test _ = test (tuple2 int int) "8 9" (Ok (8, 9))
+  let%test _ = test (tuple2 int float) "7 34.2" (Ok (7, 34.2))
 
-  let%test _ = test (tuple3 int) "7 8 9" (Ok (7, 8, 9))
-  let%test _ = test (tuple3 int) "7 L 9" (Error failure)
-  let%test _ = test (tuple3 int) "7 8" (Error failure)
-  let%test _ = test (tuple3 int) "7 8 9 10" (Error failure)
+  let%test _ = test (tuple3 int int int) "7 8 9" (Ok (7, 8, 9))
+  let%test _ = test (tuple3 int int int) "7 L 9" (Error failure)
+  let%test _ = test (tuple3 int int int) "7 8" (Error failure)
+  let%test _ = test (tuple3 int int int) "7 8 9 10" (Error failure)
 
-  let%test _ = test (tuple3g int float string) "7 8 9" (Ok (7, 8., "9"))
-  let%test _ = test (tuple3g int float string) "7 8" (Error failure)
-  let%test _ = test (tuple3g int float string) "7 8 9 10" (Ok (7, 8., "9 10"))
-  let%test _ = test (tuple3g int float no_space_string) "7 8 9 10" (Error failure)
+  let%test _ = test (tuple3 int float string) "7 8 9" (Ok (7, 8., "9"))
+  let%test _ = test (tuple3 int float string) "7 8" (Error failure)
+  let%test _ = test (tuple3 int float string) "7 8 9 10" (Ok (7, 8., "9 10"))
+  let%test _ = test (tuple3 int float no_space_string) "7 8 9 10" (Error failure)
 
-  let%test _ = test (tuple4 int) "7 8 9 10" (Ok (7, 8, 9, 10))
-  let%test _ = test (tuple4g int float char string) "7 8 9 10" (Ok (7, 8., '9', "10"))
-  let%test _ = test (tuple4g int float char string) "7 8 9 10 11" (Ok (7, 8., '9', "10 11"))
-  let%test _ = test (tuple4g int float char no_space_string) "7 8 9 10 11" (Error failure)
+  let%test _ = test (tuple4 int int int int) "7 8 9 10" (Ok (7, 8, 9, 10))
+  let%test _ = test (tuple4 int float char string) "7 8 9 10" (Ok (7, 8., '9', "10"))
+  let%test _ = test (tuple4 int float char string) "7 8 9 10 11" (Ok (7, 8., '9', "10 11"))
+  let%test _ = test (tuple4 int float char no_space_string) "7 8 9 10 11" (Error failure)
 
-  let%test _ = test (tuple5 int) "7 8 9 10 11" (Ok (7, 8, 9, 10, 11))
-  let%test _ = test (tuple5g int float bit char string) "7 8 1 9 10" (Ok (7, 8., true, '9', "10"))
-  let%test _ = test (tuple5g int float bit char string) "7 8 0 9 10 11" (Ok (7, 8., false, '9', "10 11"))
-  let%test _ = test (tuple5g int float bit char no_space_string) "7 8 0 9 10 11" (Error failure)
+  let%test _ = test (tuple5 int int int int int) "7 8 9 10 11" (Ok (7, 8, 9, 10, 11))
+  let%test _ = test (tuple5 int float bit char string) "7 8 1 9 10" (Ok (7, 8., true, '9', "10"))
+  let%test _ = test (tuple5 int float bit char string) "7 8 0 9 10 11" (Ok (7, 8., false, '9', "10 11"))
+  let%test _ = test (tuple5 int float bit char no_space_string) "7 8 0 9 10 11" (Error failure)
 
-  let%test _ = test (pairg int (list string)) "7 8 9 10" (Ok (7, ["8"; "9"; "10"]))
-  let%test _ = test (pairg int (list string)) "7" (Error failure)
+  let%test _ = test (pair int (list string)) "7 8 9 10" (Ok (7, ["8"; "9"; "10"]))
+  let%test _ = test (pair int (list string)) "7" (Error failure)
 
-  let%test _ = test (pairg int (array string)) "7 8 9 10" (Ok (7, [|"8"; "9"; "10"|]))
-  let%test _ = test (pairg int (array string)) "7" (Error failure)
+  let%test _ = test (pair int (array string)) "7 8 9 10" (Ok (7, [|"8"; "9"; "10"|]))
+  let%test _ = test (pair int (array string)) "7" (Error failure)
+
+  (* FIXME: Missing tests for separators. *)
 end)

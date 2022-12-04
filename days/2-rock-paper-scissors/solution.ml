@@ -16,7 +16,8 @@ let shape_of_string = function
   | _ -> invalid_arg "move_of_abc"
 
 let guide : (shape * shape) list =
-  Read.(lines_until_empty @@ pair @@ cast shape_of_string)
+  let shape = Read.cast shape_of_string in
+  Read.(lines_until_empty @@ pair shape shape)
 
 (** {2 Part 1}
 
