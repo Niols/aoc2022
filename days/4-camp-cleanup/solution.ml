@@ -23,7 +23,7 @@ let any_interval_inclusion interval1 interval2 =
 
 let () =
   section_assignment_pairs
-  |> List.map (fun (interval1, interval2) -> any_interval_inclusion interval1 interval2)
+  |> List.map (uncurry any_interval_inclusion)
   |> List.filter Fun.id
   |> List.length
   |> pf "%d@."

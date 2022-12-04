@@ -16,3 +16,6 @@ let foi = float_of_int
 let iof = int_of_float
 
 let (||>) f g x = f x |> g
+
+let curry f = fun a b -> f (a, b)
+let uncurry f = fun (a, b) -> f a b
