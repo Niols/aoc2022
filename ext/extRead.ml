@@ -68,6 +68,12 @@ let tuple5 ?(sep=blank) cast1 cast2 cast3 cast4 cast5 input =
     (cast1 value1, cast2 value2, cast3 value3, cast4 value4, cast5 value5)
   | _ -> failwith "ExtRead.tuple5"
 
+let tuple6 ?(sep=blank) cast1 cast2 cast3 cast4 cast5 cast6 input =
+  match Str.bounded_split sep input 6 with
+  | [value1; value2; value3; value4; value5; value6] ->
+    (cast1 value1, cast2 value2, cast3 value3, cast4 value4, cast5 value5, cast6 value6)
+  | _ -> failwith "ExtRead.tuple6"
+
 let of_string cast s = cast s
 
 let line_of_chan ichan cast = input_line ichan |> string cast

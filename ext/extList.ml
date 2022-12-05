@@ -242,3 +242,5 @@ let count p l =
     | x :: l -> count (if p x then i + 1 else i) l
   in
   count 0 l
+
+let singleton x = [x]

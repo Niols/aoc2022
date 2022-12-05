@@ -61,6 +61,13 @@ val tuple5 : ?sep:Str.regexp -> 'a cast -> 'b cast -> 'c cast -> 'd cast -> 'e c
     the third part, [cast4] on the fourth part and [cast5] on the fifth part,
     returning the 5-tuple of the results. *)
 
+val tuple6 : ?sep:Str.regexp -> 'a cast -> 'b cast -> 'c cast -> 'd cast -> 'e cast -> 'f cast -> ('a * 'b * 'c * 'd * 'e * 'f) cast
+(** [tuple6 ~sep cast1 cast2 cast3 cast4 cast5 cast6] is a cast that cuts its
+    input at the first five [sep]s (which default to blank characters) and
+    applies [cast1] on the first part, [cast2] on the second part, [cast3] on
+    the third part, [cast4] on the fourth part, [cast5] on the fifth part and
+    [cast6] on the sixth part, returning the 6-tuple of the results. *)
+
 (** {3 Custom} *)
 
 val cast : (string -> 'a) -> 'a cast
