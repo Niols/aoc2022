@@ -4,15 +4,16 @@ open Ext
 
 (** {2 Parsing} *)
 
-type crate = char
+type crate = char [@@deriving show]
 
-type stacks = crate list list
+type stacks = crate list list [@@deriving show]
 
 type move = {
   number : int ;
   from : int ;
   to_ : int ;
 }
+[@@deriving show]
 
 let stacks =
   let lines : crate option list list =
@@ -51,11 +52,27 @@ let moves =
   Read.(lines_until_empty (tuple6 string int string int string int))
   |> List.map (function
       | ("move", number, "from", from, "to", to_) ->
-        { number; from; to_ }
+        { number; from = from-1; to_=to_-1 }
       | _ -> assert false)
 
 (** {2 Part 1} *)
 
+let apply_move move stacks =
+  let open List in
+  let stacks =
+    let crates = stacks |> flip nth move.from |> take move.number in
+    stacks
+    |> update_nth move.from (drop move.number)
+    |> update_nth move.to_ (rev_append crates)
+  in
+  stacks
 
+let stack_tops = List.(map hd)
+
+let () =
+  List.fold_left (flip apply_move) stacks moves
+  |> stack_tops
+  |> List.iter (pf "%c");
+  pf "@."
 
 (** {2 Part 2} *)

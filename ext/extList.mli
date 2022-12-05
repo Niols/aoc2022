@@ -37,8 +37,23 @@ val sub : 'a list -> int -> int -> 'a list
     @raise Invalid_argument if [pos] and [len] do not designate a valid sublist
       of [l]. *)
 
+val take : int -> 'a list -> 'a list
+(** [take n l] returns the prefix of [l] of length [n]. It is the same as [sub l
+    0 n]. For all [n] between [0] and [length l], [l = take n l @ drop n l].
+
+    @raise Invalid_argument if [n] is negative or bigger than [length l]. *)
+
+val drop : int -> 'a list -> 'a list
+(** [drop n l] returns the suffix of [l] after the [n] first elements. It is the
+    same as [sub l n (length l - n)]. For all [n] between [0] and [length l], [l
+    = take n l @ drop n l].
+
+    @raise Invalid_argument if [n] is negative or bigger than [length l]. *)
+
 val count : ('a -> bool) -> 'a list -> int
 (** Counts the number of elements in the list that respect the given predicate.
     This is the same as {!filter} followed by {!length}, but faster. *)
 
 val singleton : 'a -> 'a list
+
+val update_nth : int -> ('a -> 'a) -> 'a list -> 'a list

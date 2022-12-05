@@ -228,6 +228,9 @@ let sub l pos len =
   in
   go_to_pos 0 l
 
+let take n l = sub l 0 n
+let drop n l = sub l n (length l - n)
+
 let%test_module _ = (module struct
   let%test _ = sub [1; 2; 3; 4; 5] 3 0 = []
   let%test _ = sub [1; 2; 3; 4; 5] 0 3 = [1; 2; 3]
@@ -244,3 +247,8 @@ let count p l =
   count 0 l
 
 let singleton x = [x]
+
+let rec update_nth n f = function
+  | [] -> failwith "ExtRead.update_nth"
+  | x::xs when n=0 -> f x :: xs
+  | x::xs -> x :: update_nth (n-1) f xs

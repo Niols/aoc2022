@@ -19,3 +19,5 @@ let (||>) f g x = f x |> g
 
 let curry f = fun a b -> f (a, b)
 let uncurry f = fun (a, b) -> f a b
+
+let flip f x y = f y x
