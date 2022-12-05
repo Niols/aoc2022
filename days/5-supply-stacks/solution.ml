@@ -57,22 +57,29 @@ let moves =
 
 (** {2 Part 1} *)
 
-let apply_move move stacks =
-  let open List in
+open List
+
+let apply_move custom_append move stacks =
   let stacks =
     let crates = stacks |> flip nth move.from |> take move.number in
     stacks
     |> update_nth move.from (drop move.number)
-    |> update_nth move.to_ (rev_append crates)
+    |> update_nth move.to_ (custom_append crates)
   in
   stacks
 
-let stack_tops = List.(map hd)
+let stack_tops = map hd
 
 let () =
-  List.fold_left (flip apply_move) stacks moves
+  fold_left (flip @@ apply_move rev_append) stacks moves
   |> stack_tops
-  |> List.iter (pf "%c");
+  |> iter (pf "%c");
   pf "@."
 
 (** {2 Part 2} *)
+
+let () =
+  fold_left (flip @@ apply_move append) stacks moves
+  |> stack_tops
+  |> iter (pf "%c");
+  pf "@."
