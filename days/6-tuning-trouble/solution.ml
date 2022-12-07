@@ -11,17 +11,19 @@ let length = String.length stream
 
 exception Found of int
 
-let sop_marker_position =
+let marker_position nb_chars =
   try
-    for pos = 4 to length do
-      let char4 = [ stream.[pos - 4]; stream.[pos - 3]; stream.[pos - 2]; stream.[pos - 1] ] in
-      let n = List.(length @@ sort_uniq Char.compare char4) in
-      if n = 4 then raise (Found pos)
+    for pos = nb_chars to length do
+      let chars = List.init nb_chars (fun i -> stream.[pos - (i + 1)]) in
+      let n = List.(length @@ sort_uniq Char.compare chars) in
+      if n = nb_chars then raise (Found pos)
     done;
     assert false
   with
     Found pos -> pos
 
-let () = pf "%d@." sop_marker_position
+let () = pf "%d@." (marker_position 4)
 
 (** {2 Part 2} *)
+
+let () = pf "%d@." (marker_position 14)
