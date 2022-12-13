@@ -100,7 +100,27 @@ let rec apply_lines zipper =
 
 let filesystem = Filesystem.unzip @@ apply_lines @@ Filesystem.zip []
 
-let () = epf "%a@." Filesystem.pp filesystem
+let rec size_and_below ~threshold entries =
+  let (size, below) =
+    entries
+    |> List.map (fun (_, file) -> file_size_and_below ~threshold file)
+    |> List.fold_left
+      (fun (total_size, total_below) (size, below) ->
+         (total_size + size, total_below + below))
+      (0, 0)
+  in
+  if size <= threshold then
+    (size, size+below)
+  else
+    (size, below)
+
+and file_size_and_below ~threshold = function
+  | Filesystem.RegularFile size -> (size, 0)
+  | Filesystem.Directory entries -> size_and_below ~threshold entries
+
+let below = snd @@ size_and_below ~threshold:100_000 filesystem
+
+let () = pf "%d@." below
 
 (** {2 Part 1} *)
 
