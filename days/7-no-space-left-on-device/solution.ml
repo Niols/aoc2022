@@ -136,3 +136,17 @@ let () =
   |> pf "%d@."
 
 (** {2 Part 2} *)
+
+let total_space = 70_000_000
+let target_unused = 30_000_000
+
+let current_unused = total_space - size filesystem
+let missing_unused = target_unused - current_unused
+
+let () =
+  filesystem
+  |> dir_sizes
+  |> List.filter (fun size -> size >= missing_unused)
+  |> List.sort Int.compare
+  |> List.hd
+  |> pf "%d@."
