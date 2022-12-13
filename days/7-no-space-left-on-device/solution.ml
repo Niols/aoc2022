@@ -100,28 +100,39 @@ let rec apply_lines zipper =
 
 let filesystem = Filesystem.unzip @@ apply_lines @@ Filesystem.zip []
 
-let rec size_and_below ~threshold entries =
-  let (size, below) =
-    entries
-    |> List.map (fun (_, file) -> file_size_and_below ~threshold file)
-    |> List.fold_left
-      (fun (total_size, total_below) (size, below) ->
-         (total_size + size, total_below + below))
-      (0, 0)
-  in
-  if size <= threshold then
-    (size, size+below)
-  else
-    (size, below)
-
-and file_size_and_below ~threshold = function
-  | Filesystem.RegularFile size -> (size, 0)
-  | Filesystem.Directory entries -> size_and_below ~threshold entries
-
-let below = snd @@ size_and_below ~threshold:100_000 filesystem
-
-let () = pf "%d@." below
-
 (** {2 Part 1} *)
+
+(** Returns the size of the directory as well as the list of sizes of
+    directories contained within. *)
+let rec size_and_dir_sizes entries =
+  let (size, dir_sizes) =
+    entries
+    |> List.map (fun (_, file) -> file_size_and_dir_sizes file)
+    |> List.fold_left
+      (fun (total_size, total_dir_sizes) (size, dir_sizes) ->
+         (total_size + size, List.rev_append dir_sizes total_dir_sizes))
+      (0, [])
+  in
+  (size, size :: dir_sizes)
+
+(** Returns the size of the file as well as the list of sizes of directories
+    contained within. *)
+and file_size_and_dir_sizes = function
+  | Filesystem.RegularFile size -> (size, [])
+  | Filesystem.Directory entries -> size_and_dir_sizes entries
+
+(** Returns the size of a directory. *)
+let size entries = fst @@ size_and_dir_sizes entries
+
+(** Returns the list of sizes of directories in the given directory, including
+    the directory itself. *)
+let dir_sizes entries = snd @@ size_and_dir_sizes entries
+
+let () =
+  filesystem
+  |> dir_sizes
+  |> List.filter (fun size -> size <= 100_000)
+  |> List.fold_left (+) 0
+  |> pf "%d@."
 
 (** {2 Part 2} *)
