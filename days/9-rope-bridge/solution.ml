@@ -24,10 +24,10 @@ type position = int * int
 
 let initial_position = (0, 0)
 
-(** The state of the rope: head first followed by its tail. *)
-type state = position list
+(** The state of the rope: head first followed by its tails. *)
+type rope = position list
 
-let initial_state size = List.init size @@ Fun.const initial_position
+let initial_rope size = List.init size @@ Fun.const initial_position
 
 let move (x, y) = function
   | Right -> (x + 1, y)
@@ -64,22 +64,37 @@ let follow ~lead:(lead_x, lead_y) (x, y) =
       )
     )
 
+let move_rope rope dir =
+  match rope with
+  | [] -> invalid_arg "move_rope"
+  | head :: tails ->
+    let head = move head dir in
+    let rev_rope =
+      List.fold_left
+        (fun rev_rope tail ->
+           let tail = follow ~lead:(List.hd rev_rope) tail in
+           tail :: rev_rope)
+        [head]
+        tails
+    in
+    List.rev rev_rope
+
 (** A set of positions. *)
 module PSet = Set.Make (struct type t = position let compare = compare end)
 
 let initial_pset = PSet.singleton (0, 0)
 
-let move_and_gobble (head_pos, tail_pos, pset) dir =
-  let head_pos = move head_pos dir in
-  let tail_pos = follow ~lead:head_pos tail_pos in
-  (head_pos, tail_pos, PSet.add tail_pos pset)
+let move_and_gobble (rope, pset) dir =
+  let rope = move_rope rope dir in
+  let last = List.ft rope in
+  (rope, PSet.add last pset)
 
-let initial = (initial_position, initial_position, initial_pset)
+let initial = (initial_rope 2, initial_pset)
 
 let _ =
   directions
   |> List.fold_left move_and_gobble initial
-  |> (fun (_head_pos, _tail_pos, pset) -> pset)
+  |> snd
   |> PSet.cardinal
   |> pf "%d@."
 
