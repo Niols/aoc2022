@@ -19,11 +19,16 @@ let length_y = Array.length tree_sizes.(0)
 
 type int_int_list = (int * int) list [@@deriving show]
 
+let trees_top x y = List.init x (fun i -> (i, y))
+let trees_bottom x y = List.init (length_x - x - 1) (fun i -> (x + 1 + i, y))
+let trees_left x y = List.init y (fun j -> (x, j))
+let trees_right x y = List.init (length_y - y - 1) (fun j -> (x, y + 1 + j))
+
 let is_tree_visible x y =
-  let top = List.init x (fun i -> (i, y)) in
-  let bottom = List.init (length_x - x - 1) (fun i -> (x + 1 + i, y)) in
-  let left = List.init y (fun j -> (x, j)) in
-  let right = List.init (length_y - y - 1) (fun j -> (x, y + 1 + j)) in
+  let top = trees_top x y in
+  let bottom = trees_bottom x y in
+  let left = trees_left x y in
+  let right = trees_right x y in
   let visible_from =
     List.for_all (fun (i, j) -> tree_sizes.(i).(j) < tree_sizes.(x).(y))
   in
