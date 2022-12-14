@@ -252,3 +252,8 @@ let rec update_nth n f = function
   | [] -> failwith "ExtRead.update_nth"
   | x::xs when n=0 -> f x :: xs
   | x::xs -> x :: update_nth (n-1) f xs
+
+let rec prefix_until_inclusive p = function
+  | [] -> []
+  | x :: _ when p x -> [x]
+  | x :: xs -> x :: prefix_until_inclusive p xs

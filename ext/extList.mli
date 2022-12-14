@@ -57,3 +57,8 @@ val count : ('a -> bool) -> 'a list -> int
 val singleton : 'a -> 'a list
 
 val update_nth : int -> ('a -> 'a) -> 'a list -> 'a list
+
+val prefix_until_inclusive : ('a -> bool) -> 'a list -> 'a list
+(** Returns the prefix consisting in a bunch of elements not satisfying the
+    given predicate, followed by the first elements satisfying the given
+    predicate, if there is one. *)
