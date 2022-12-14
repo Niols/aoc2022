@@ -99,3 +99,12 @@ let _ =
   |> pf "%d@."
 
 (** {2 Part 2} *)
+
+let initial = (initial_rope 10, initial_pset)
+
+let _ =
+  directions
+  |> List.fold_left move_and_gobble initial
+  |> snd
+  |> PSet.cardinal
+  |> pf "%d@."
