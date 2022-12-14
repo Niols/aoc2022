@@ -20,71 +20,66 @@ let directions =
 
 (** {2 Part 1} *)
 
-type state = {
-  head_x : int ;
-  head_y : int ;
-  tail_x : int ;
-  tail_y : int ;
-}
+type position = int * int
 
-let initial_state = {
-  head_x = 0 ;
-  head_y = 0 ;
-  tail_x = 0 ;
-  tail_y = 0 ;
-}
+let initial_position = (0, 0)
 
-let move_head s = function
-  | Right -> { s with head_x = s.head_x + 1 }
-  | Up    -> { s with head_y = s.head_y + 1 }
-  | Left  -> { s with head_x = s.head_x - 1 }
-  | Down  -> { s with head_y = s.head_y - 1 }
+(** The state of the rope: head first followed by its tail. *)
+type state = position list
 
-let move_tail s =
+let initial_state size = List.init size @@ Fun.const initial_position
+
+let move (x, y) = function
+  | Right -> (x + 1, y)
+  | Up    -> (x, y + 1)
+  | Left  -> (x - 1, y)
+  | Down  -> (x, y - 1)
+
+let follow ~lead:(lead_x, lead_y) (x, y) =
   let should_move =
-    abs (s.head_x - s.tail_x) > 1
-    || abs (s.head_y - s.tail_y) > 1
+    abs (lead_x - x) > 1
+    || abs (lead_y - y) > 1
   in
   if not should_move then
     (
-      s
+      (x, y)
     )
   else
     (
-      let tail_x =
-        if s.head_x > s.tail_x then
-          s.tail_x + 1
-        else if s.head_x < s.tail_x then
-          s.tail_x - 1
+      (
+        if lead_x > x then
+          x + 1
+        else if lead_x < x then
+          x - 1
         else
-          s.tail_x
-      in
-      let tail_y =
-        if s.head_y > s.tail_y then
-          s.tail_y + 1
-        else if s.head_y < s.tail_y then
-          s.tail_y - 1
+          x
+      ),
+      (
+        if lead_y > y then
+          y + 1
+        else if lead_y < y then
+          y - 1
         else
-          s.tail_y
-      in
-      { s with tail_x; tail_y }
+          y
+      )
     )
 
 (** A set of positions. *)
-module PSet = Set.Make (struct type t = int * int let compare = compare end)
+module PSet = Set.Make (struct type t = position let compare = compare end)
 
 let initial_pset = PSet.singleton (0, 0)
 
-let move_and_gobble (s, pset) dir =
-  let s = move_tail @@ move_head s dir in
-  (s, PSet.add (s.tail_x, s.tail_y) pset)
+let move_and_gobble (head_pos, tail_pos, pset) dir =
+  let head_pos = move head_pos dir in
+  let tail_pos = follow ~lead:head_pos tail_pos in
+  (head_pos, tail_pos, PSet.add tail_pos pset)
 
-let initial = (initial_state, initial_pset)
+let initial = (initial_position, initial_position, initial_pset)
 
 let _ =
   directions
   |> List.fold_left move_and_gobble initial
-  |> snd
+  |> (fun (_head_pos, _tail_pos, pset) -> pset)
   |> PSet.cardinal
   |> pf "%d@."
 
