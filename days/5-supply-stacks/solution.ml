@@ -1,6 +1,6 @@
 (** {1 Day 5 -- Supply Stacks} *)
 
-open Ext
+open Next
 
 (** {2 Parsing} *)
 
@@ -18,7 +18,7 @@ type move = {
 let stacks =
   let lines : crate option list list =
     (* This is a bit tricky to parse. We will gather all the lines first. *)
-    Read.(lines_until_empty string)
+    GRead.(lines_until_empty string)
     (* We drop the last line. *)
     |> List.bd
     (* For each line, we will find all the characters in a position equal to 1
@@ -49,7 +49,7 @@ let stacks =
   somewhat_transpose lines
 
 let moves =
-  Read.(lines_until_empty (tuple6 string int string int string int))
+  GRead.(lines_until_empty (tuple6 string int string int string int))
   |> List.map (function
       | ("move", number, "from", from, "to", to_) ->
         { number; from = from-1; to_=to_-1 }

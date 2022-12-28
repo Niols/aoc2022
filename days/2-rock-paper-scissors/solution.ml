@@ -1,6 +1,6 @@
 (** {1 Day 2 -- Rock-Paper-Scissors} *)
 
-open Ext
+open Next
 
 (** {2 Parsing}
 
@@ -16,8 +16,8 @@ let shape_of_string = function
   | _ -> invalid_arg "move_of_abc"
 
 let guide : (shape * shape) list =
-  let shape = Read.cast shape_of_string in
-  Read.(lines_until_empty @@ pair shape shape)
+  let shape = GRead.cast shape_of_string in
+  GRead.(lines_until_empty @@ pair shape shape)
 
 (** {2 Part 1}
 

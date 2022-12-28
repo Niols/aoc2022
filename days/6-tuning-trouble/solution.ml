@@ -1,10 +1,10 @@
 (** {1 Day 6 -- Tuning Trouble} *)
 
-open Ext
+open Next
 
 (** {2 Parsing} *)
 
-let stream = Read.(line string)
+let stream = GRead.(line string)
 let length = String.length stream
 
 (** {2 Part 1} *)

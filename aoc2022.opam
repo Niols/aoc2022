@@ -8,6 +8,7 @@ bug-reports: "https://github.com/Niols/aoc2022/issues"
 depends: [
   "dune" {>= "2.8"}
   "logs"
+  "next"
   "ppx_inline_test" {build | with-test}
   "ppx_deriving" {build}
   "odoc" {with-doc}
@@ -27,3 +28,6 @@ build: [
   ]
 ]
 dev-repo: "git+https://github.com/Niols/aoc2022.git"
+pin-depends: [
+  [ "next.0.1.0" "git+https://github.com/niols/ocaml-next#ac8150415a466a9a963fbdf7685b7945fb2e81d0" ]
+]

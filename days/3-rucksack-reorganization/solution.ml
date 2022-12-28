@@ -1,6 +1,6 @@
 (** {1 Day 3 -- Rucksack Reorganization} *)
 
-open Ext
+open Next
 
 (** {2 Parsing} *)
 
@@ -9,7 +9,7 @@ type compartment = item list
 type rucksack = compartment * compartment
 
 let contents : rucksack list =
-  Read.(lines_until_empty string)
+  GRead.(lines_until_empty string)
   |> List.map (fun line -> String.fold_right List.cons line [])
   |> List.map (fun line ->
       let length = List.length line in

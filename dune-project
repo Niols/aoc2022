@@ -13,5 +13,6 @@
  (synopsis "My contribution to the Advent of Code in 2022")
  (depends
   logs
+  next
   (ppx_inline_test (or :build :with-test))
   (ppx_deriving    :build)))

@@ -1,12 +1,12 @@
 (** {1 Day 0 -- Sample} *)
 
-open Ext
+open Next
 
 (** {2 Parsing} *)
 
 type direction = Right | Up | Left | Down
 
-let direction = Read.cast @@ function
+let direction = GRead.cast @@ function
   | "R" -> Right
   | "U" -> Up
   | "L" -> Left
@@ -14,7 +14,7 @@ let direction = Read.cast @@ function
   | _ -> invalid_arg "direction_of_letter"
 
 let directions =
-  Read.(lines_until_empty (pair direction int))
+  GRead.(lines_until_empty (pair direction int))
   |> List.map (fun (dir, nb) -> List.init nb (Fun.const dir))
   |> List.flatten
 

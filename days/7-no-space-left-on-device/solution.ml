@@ -1,6 +1,6 @@
 (** {1 Day 7 -- No Space Left On Device} *)
 
-open Ext
+open Next
 
 module Path = struct
   type t = string list
@@ -75,7 +75,7 @@ module Filesystem = struct
 end
 
 let rec apply_lines zipper =
-  match Read.(line string) with
+  match GRead.(line string) with
   | exception End_of_file -> zipper
   | line when String.sub line 0 2 = "$ " ->
     (
@@ -86,7 +86,7 @@ let rec apply_lines zipper =
     )
   | line ->
     (
-      let (dir_or_size, filename) = Read.(of_string (pair string string)) line in
+      let (dir_or_size, filename) = GRead.(of_string (pair string string)) line in
       let entry =
         (filename,
          if dir_or_size = "dir"

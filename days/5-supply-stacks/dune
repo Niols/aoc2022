@@ -1,7 +1,6 @@
 (executable
  (name solution)
- (libraries aoc2022.ext)
- (preprocess (pps ppx_deriving.std))
-)
+ (libraries next)
+ (preprocess (pps ppx_deriving.std)))
 
 (cram (deps ./solution.exe))

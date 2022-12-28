@@ -1,6 +1,6 @@
 (** {1 Day 1 -- Calorie Counting} *)
 
-open Ext
+open Next
 
 (** {2 Parsing}
 
@@ -14,7 +14,7 @@ let elfs : int list list =
      input and to stop on the first empty line. We use {!List.init_until} to
      repeat this process until we encounter an {!End_of_file}. *)
   List.init_until @@ fun _ ->
-  try Some Read.(lines_until_empty int) with End_of_file -> None
+  try Some GRead.(lines_until_empty int) with End_of_file -> None
 
 let calories : int list = List.map (List.fold_left (+) 0) elfs
 

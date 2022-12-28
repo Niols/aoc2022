@@ -1,12 +1,12 @@
 (** {1 Day 8 -- Treetop Tree House} *)
 
-open Ext
+open Next
 
 (** {2 Parsing} *)
 
 (** All the tree sizes; starting from the top left corner. *)
 let tree_sizes : int array array =
-  Read.(lines_until_empty string)
+  GRead.(lines_until_empty string)
   |> List.map String.to_seq
   |> List.map (Seq.map int_of_char)
   |> List.map (Array.of_seq)
